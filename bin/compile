@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# bin/compile <build-dir> <cache-dir> <env-dir>
+
+BUILD_DIR=$1
+CACHE_DIR=$2
+ENV_DIR=$3
+
+BUILDPACK_DIR="$(dirname $(dirname $0))"
+
+mkdir -p "$BUILD_DIR/bin"
+mkdir -p "$BUILD_DIR/vendor/pgpool"
+
+cp "$BUILDPACK_DIR/etc/pgpool.conf" "$BUILD_DIR/vendor/pgpool/pgpool.conf.sample"
+cp "$BUILDPACK_DIR/etc/pool_hba.conf" "$BUILD_DIR/vendor/pgpool/pool_hba.conf.sample"
+cp "$BUILDPACK_DIR/bin/start-pgpool" "$BUILD_DIR/bin/start-pgpool"
