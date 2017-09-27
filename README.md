@@ -145,7 +145,7 @@ Feel free to make a pull request answering that here.
 
 ### I have other questions
 
-As always, take a look at [Pgpool's documentation](http://www.pgpool.net), [Stack Overflow](https:/stackoverflow.com) and [Server Fault](https://serverfault.com) and [Google](https://www.google.com) before opening an issue.
+As always, take a look at [Pgpool's documentation](http://www.pgpool.net), [Stack Overflow](https:/stackoverflow.com), [Server Fault](https://serverfault.com) and [Google](https://www.google.com) before opening an issue.
 
 ## TODO
 
