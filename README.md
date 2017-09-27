@@ -63,7 +63,7 @@ Be aware that there is pros and cons of using the pgpool at the database server 
 
 This buildpack configures pgpool as load balancing and sets the databases automatically on `pgpool.conf`.
 
-If you have any questions, check the [Pgpool documentation](http://www.pgpool.net/mediawiki/index.php/Main_Page) first and/or ask at [Stack Overflow](https://stackoverflow.com).
+If you have any questions, check the [Pgpool's documentation](http://www.pgpool.net) first and/or ask at [Stack Overflow](https://stackoverflow.com) or [Server Fault](https://serverfault.com).
 
 In the case you understand shell scripting and pgpool configuration, you can take a look at [bin/start-pgpool](bin/start-pgpool) and [etc/pgpool.conf](etc/pgpool.conf).
 
@@ -75,7 +75,7 @@ You need to create an Aptfile with the following contents:
 pgpool2
 ```
 
-This will download and install the [pgpool2](http://www.pgpool.net) on [Heroku](https://heroku.com) using the [heroku-buildpack-apt](https://github.com/heroku/heroku-buildpack-apt).
+This will download and install the [pgpool](http://www.pgpool.net) on [Heroku](https://heroku.com) using the [heroku-buildpack-apt](https://github.com/heroku/heroku-buildpack-apt).
 
 Configure your `Procfile` to call bin/start-pgpool before the application itself, example:
 
@@ -105,7 +105,7 @@ heroku run bin/start-pgpool bundle exec console
 heroku run bin/start-pgpool bundle exec rake something
 ```
 
-If you get you doing this a lot, you can override the console and rake commands in your Procfile, or similar if you aren't using [rails](http://rubyonrails.org), like this:
+If you get you doing this a lot, you can override the console and rake commands in your Procfile, or similar if you aren't using [Rails](http://rubyonrails.org), like this:
 
 ```
 web: bin/start-pgpool bundle exec puma -p $PORT
@@ -145,7 +145,7 @@ Feel free to make a pull request answering that here.
 
 ### I have other questions
 
-As always, take a look at [pgpool documentation](http://www.pgpool.net/mediawiki/index.php/Main_Page), [stack overflow](https:/stackoverflow.com] and [server fault](https://serverfault.com) and [Google](https://www.google.com) before opening an issue.
+As always, take a look at [Pgpool's documentation](http://www.pgpool.net), [Stack Overflow](https:/stackoverflow.com) and [Server Fault](https://serverfault.com) and [Google](https://www.google.com) before opening an issue.
 
 ## TODO
 
