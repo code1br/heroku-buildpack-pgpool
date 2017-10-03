@@ -7,9 +7,9 @@ This buildpack depends on [heroku-buildpack-apt](https://github.com/heroku/herok
 You must configure the buildpacks in the following order:
 
 ```bash
-heroku buildpacks:add https://github.com/sobrinho/heroku-buildpack-apt --index 1
+heroku buildpacks:add https://github.com/heroku/heroku-buildpack-apt --index 1
 heroku buildpacks:add https://github.com/sobrinho/heroku-buildpack-pgpool --index 2
-heroku buildpacks:add https://github.com/sobrinho/heroku-buildpack-ruby --index 3
+heroku buildpacks:add https://github.com/heroku/heroku-buildpack-ruby --index 3
 ```
 
 _heroku-buildpack-ruby is not a dependency, it's an example of an application buildpack which must be the latest, you may use whatever you want._
