@@ -85,6 +85,8 @@ backend_data_directory$i = '/data'
 backend_flag$i = 'ALLOW_TO_FAILOVER'
 EOF
 
+    pg_md5 -m -u "$DB_USER" -f /app/vendor/pgpool/pgpool.conf "$DB_PASS"
+
     let "i += 1"
   done
 
