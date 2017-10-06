@@ -76,6 +76,20 @@ config-gen() {
   do
     IFS=':' read DB_USER DB_PASS DB_HOST DB_PORT DB_NAME <<< $(eval "echo \$$POSTGRES_URL" | perl -lne 'print "$1:$2:$3:$4:$5" if /^postgres(?:ql)?:\/\/([^:]*):([^@]*)@(.*?):(.*?)\/(.*?)$/')
 
+    if [ "$i" -eq "0" ]; then
+      cat >> /app/vendor/pgpool/pgpool.conf <<EOF
+# streaming check
+sr_check_user = '$DB_USER'
+sr_check_password = '$DB_PASS'
+sr_check_database = '$DB_NAME'
+
+# health check
+health_check_user = '$DB_USER'
+health_check_password = '$DB_PASS'
+health_check_database = '$DB_NAME'
+EOF
+    fi
+
     cat >> /app/vendor/pgpool/pgpool.conf <<EOF
 # backend for $POSTGRES_URL
 backend_hostname$i = '$DB_HOST'
