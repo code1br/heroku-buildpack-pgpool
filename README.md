@@ -44,7 +44,7 @@ You can configure the pgpool buildpack by using the `PGPOOL_URLS`.
 This variable expects to have the `HEROKU_POSTGRESQL_*COLOR*_URL` names, not the scheme itself, example:
 
 ```
-heroku config:set PGPOOL_URLS='HEROKU_POSTGRESQL_CHARCOAL_URL HEROKU_POSTGRESQL_WHITE'
+heroku config:set PGPOOL_URLS='HEROKU_POSTGRESQL_CHARCOAL_URL HEROKU_POSTGRESQL_WHITE_URL'
 ```
 
 The first one must be the master database and the others the followers.
