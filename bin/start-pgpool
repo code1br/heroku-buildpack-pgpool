@@ -97,6 +97,7 @@ backend_port$i = $DB_PORT
 backend_weight$i = 1
 backend_data_directory$i = '/data'
 backend_flag$i = 'ALLOW_TO_FAILOVER'
+backend_application_name$i = '$POSTGRES_URL'
 EOF
 
     pg_md5 -m -u "$DB_USER" -f /app/vendor/pgpool/pgpool.conf "$DB_PASS"
