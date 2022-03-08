@@ -21,14 +21,14 @@ func main() {
 		pgpool.Wait()
 
 		if app.Process != nil {
-			app.Process.Kill()
+			app.Process.Wait()
 		}
 	}()
 
 	app.Wait()
 
 	if pgpool.Process != nil {
-		pgpool.Process.Kill()
+		pgpool.Process.Wait()
 	}
 }
 
