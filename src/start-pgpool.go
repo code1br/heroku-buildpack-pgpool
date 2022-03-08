@@ -14,7 +14,7 @@ import (
 func main() {
 	configure()
 
-	pgpool := run(false, "pgpool", "-n", "-f", "/app/vendor/pgpool/pgpool.conf", "-a", "/app/vendor/pgpool/pool_hba.conf")
+	pgpool := run(false, "pgpool", "-n", "-f", "/app/vendor/pgpool/pgpool.conf")
 	app := run(true, os.Args[1], os.Args[2:]...)
 
 	go func() {
