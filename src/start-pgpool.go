@@ -90,7 +90,7 @@ func configurePoolPasswd() {
 	for _, postgresUrl := range postgresUrls() {
 		user := postgresUrl.User.Username()
 		password, _ := postgresUrl.User.Password()
-		poolPasswd += fmt.Sprintf("%s:md5%s\n", user, md5.Sum([]byte(password)))
+		poolPasswd += fmt.Sprintf("%s:md5%x\n", user, md5.Sum([]byte(password+user)))
 	}
 
 	err := os.WriteFile("/app/vendor/pgpool/pool_passwd", []byte(poolPasswd), 0600)
