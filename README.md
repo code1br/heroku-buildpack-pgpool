@@ -125,6 +125,12 @@ heroku config:set PGPOOL_ENABLED=0 # disables pgpool
 heroku config:set PGPOOL_ENABLED=1 # enables pgpool
 ```
 
+## Building
+
+```bash
+env GOOS=linux GOARCH=amd64 go build -o bin/start-pgpool src/start-pgpool.go
+```
+
 ## FAQ
 
 ### This will start one pgpool per dyno?
