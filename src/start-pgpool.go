@@ -105,7 +105,7 @@ func configurePoolPasswd() {
 }
 
 func postgresUrls() []*url.URL {
-	pgpoolUrls := strings.Split(os.Getenv("PGPOOL_URLS"), ",")
+	pgpoolUrls := strings.Split(os.Getenv("PGPOOL_URLS"), " ")
 
 	if len(pgpoolUrls) == 0 {
 		log.Fatal("PGPOOL_URLS is not set")
@@ -114,19 +114,19 @@ func postgresUrls() []*url.URL {
 	postgresUrls := make([]*url.URL, len(pgpoolUrls))
 
 	for i, pgpoolUrl := range pgpoolUrls {
-		pgpoolUrl = os.Getenv(pgpoolUrl)
+		postgresUrl := os.Getenv(pgpoolUrl)
 
-		if pgpoolUrl == "" {
+		if postgresUrl == "" {
 			log.Fatal(pgpoolUrl + " is not set")
 		}
 
-		uri, err := url.Parse(pgpoolUrl)
+		postgresUrlUrl, err := url.Parse(postgresUrl)
 		if err != nil {
 			log.Println(err)
 			log.Fatal(pgpoolUrl + " is invalid")
 		}
 
-		postgresUrls[i] = uri
+		postgresUrls[i] = postgresUrlUrl
 	}
 
 	return postgresUrls
