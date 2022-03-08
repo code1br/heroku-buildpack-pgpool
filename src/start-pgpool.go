@@ -55,7 +55,7 @@ func configurePgpoolConf() {
 	for i, postgresUrl := range postgresUrls() {
 		host, port, _ := net.SplitHostPort(postgresUrl.Host)
 		user := postgresUrl.User.Username()
-		database := postgresUrl.Path
+		database := postgresUrl.Path[1:]
 
 		if i == 0 {
 			pgpoolConf = append(pgpoolConf, fmt.Sprintf(`
