@@ -46,6 +46,7 @@ func configurePgpoolConf() {
 
 	pgpoolConf = append(pgpoolConf, `
 		socket_dir = '/tmp'
+		pcp_socket_dir = '/tmp'
 		pool_passwd = '/app/vendor/pgpool/pool_passwd'
 		ssl = on
 		pid_file_name = '/tmp/pgpool.pid'
