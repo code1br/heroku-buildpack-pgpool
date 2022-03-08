@@ -45,6 +45,7 @@ func configurePgpoolConf() {
 	}
 
 	pgpoolConf = append(pgpoolConf, `
+		socket_dir = '/tmp'
 		pid_file_name = '/tmp/pgpool.pid'
 		logdir = '/tmp'
 	`...)
