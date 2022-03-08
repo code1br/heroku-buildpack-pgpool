@@ -44,6 +44,11 @@ func configurePgpoolConf() {
 		log.Fatal(err)
 	}
 
+	pgpoolConf = append(pgpoolConf, `
+		pid_file_name = '/tmp/pgpool.pid'
+		logdir = '/tmp'
+	`...)
+
 	for i, postgresUrl := range postgresUrls() {
 		host, port, _ := net.SplitHostPort(postgresUrl.Host)
 		user := postgresUrl.User.Username()
