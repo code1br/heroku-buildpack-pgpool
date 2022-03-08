@@ -46,6 +46,8 @@ func configurePgpoolConf() {
 
 	pgpoolConf = append(pgpoolConf, `
 		socket_dir = '/tmp'
+		pool_passwd = '/app/vendor/pgpool/pool_passwd'
+		ssl = on
 		pid_file_name = '/tmp/pgpool.pid'
 		logdir = '/tmp'
 	`...)
@@ -53,38 +55,25 @@ func configurePgpoolConf() {
 	for i, postgresUrl := range postgresUrls() {
 		host, port, _ := net.SplitHostPort(postgresUrl.Host)
 		user := postgresUrl.User.Username()
-		password, _ := postgresUrl.User.Password()
 		database := postgresUrl.Path
 
 		if i == 0 {
-			streaming := fmt.Sprintf(`
-				# streaming check
-				sr_check_user = '%s'
-				sr_check_password = '%s'
-				sr_check_database = '%s'
-			`, user, password, database)
-
-			healthcheck := fmt.Sprintf(`
-				# health check
-				health_check_user = '%s'
-				health_check_password = '%s'
-				health_check_database = '%s'
-			`, user, password, database)
-
-			pgpoolConf = append(pgpoolConf, streaming...)
-			pgpoolConf = append(pgpoolConf, healthcheck...)
+			pgpoolConf = append(pgpoolConf, fmt.Sprintf(`
+				sr_check_user = '%[1]s'
+				sr_check_database = '%[2]s'
+			
+				health_check_user = '%[1]s'
+				health_check_database = '%[2]s'
+			`, user, database)...)
 		}
 
-		backend := fmt.Sprintf(`
-			# backend %[1]d
+		pgpoolConf = append(pgpoolConf, fmt.Sprintf(`
 			backend_hostname%[1]d = '%[2]s'
 			backend_port%[1]d = %[3]s
 			backend_weight%[1]d = 1
 			backend_data_directory%[1]d = '/data'
 			backend_flag%[1]d = 'ALLOW_TO_FAILOVER'
-		`, i, host, port)
-
-		pgpoolConf = append(pgpoolConf, backend...)
+		`, i, host, port)...)
 	}
 
 	err = os.WriteFile("/app/vendor/pgpool/pgpool.conf", pgpoolConf, 0600)
