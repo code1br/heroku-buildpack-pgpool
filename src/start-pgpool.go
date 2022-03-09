@@ -22,7 +22,7 @@ func main() {
 	signal.Ignore(syscall.SIGINT)
 	signal.Notify(sigs, syscall.SIGTERM)
 
-	pgpool := run(true, "pgpool", "-n", "-f", "/app/vendor/pgpool/pgpool.conf")
+	pgpool := run(true, "/app/.apt/usr/sbin/pgpool", "-n")
 	defer pgpool.Process.Kill()
 
 	app := run(false, os.Args[1], os.Args[2:]...)
@@ -61,7 +61,7 @@ func configure() {
 }
 
 func configurePgpoolConf() {
-	pgpoolConf, err := os.ReadFile("/app/vendor/pgpool/pgpool.conf.sample")
+	pgpoolConf, err := os.ReadFile("/app/.apt/usr/share/pgpool2/pgpool.conf")
 
 	if err != nil {
 		log.Fatal(err)
@@ -70,7 +70,6 @@ func configurePgpoolConf() {
 	pgpoolConf = append(pgpoolConf, `
 		socket_dir = '/tmp'
 		pcp_socket_dir = '/tmp'
-		pool_passwd = '/app/vendor/pgpool/pool_passwd'
 		ssl = on
 		pid_file_name = '/tmp/pgpool.pid'
 		logdir = '/tmp'
@@ -116,7 +115,7 @@ func configurePoolPasswd() {
 		poolPasswd += fmt.Sprintf("%s:md5%x\n", user, md5.Sum([]byte(password+user)))
 	}
 
-	err := os.WriteFile("/app/vendor/pgpool/pool_passwd", []byte(poolPasswd), 0600)
+	err := os.WriteFile("/app/.apt/usr/share/pgpool2/pool_passwd", []byte(poolPasswd), 0600)
 
 	if err != nil {
 		log.Fatal(err)
