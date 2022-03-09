@@ -8,28 +8,56 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"os/signal"
 	"strings"
+	"syscall"
 )
 
 func main() {
 	configure()
 
+	sigint := make(chan os.Signal, 1)
+	sigterm := make(chan os.Signal, 1)
+	done := make(chan bool, 1)
+
+	signal.Notify(sigint, syscall.SIGINT)
+	signal.Notify(sigterm, syscall.SIGTERM)
+
 	pgpool := run(false, "pgpool", "-n", "-f", "/app/vendor/pgpool/pgpool.conf")
 	app := run(true, os.Args[1], os.Args[2:]...)
 
 	go func() {
-		pgpool.Wait()
-
-		if app.Process != nil {
-			app.Process.Wait()
+		for {
+			sig := <-sigint
+			app.Process.Signal(sig)
 		}
 	}()
 
-	app.Wait()
+	go func() {
+		sig := <-sigterm
 
-	if pgpool.Process != nil {
-		pgpool.Process.Wait()
-	}
+		app.Process.Signal(sig)
+		appErr := app.Wait()
+
+		if appErr != nil {
+			log.Println(appErr)
+		}
+
+		pgpool.Process.Signal(sig)
+		pgpoolErr := pgpool.Wait()
+
+		if pgpoolErr != nil {
+			log.Println(pgpoolErr)
+		}
+
+		if appErr != nil || pgpoolErr != nil {
+			os.Exit(1)
+		}
+
+		done <- true
+	}()
+
+	<-done
 }
 
 func configure() {
