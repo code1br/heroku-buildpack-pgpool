@@ -16,17 +16,17 @@ import (
 func main() {
 	configure()
 
-	sigterm := make(chan os.Signal, 1)
+	sigs := make(chan os.Signal, 1)
 	done := make(chan bool, 1)
 
 	signal.Ignore(syscall.SIGINT)
-	signal.Notify(sigterm, syscall.SIGTERM)
+	signal.Notify(sigs, syscall.SIGTERM)
 
 	pgpool := run(false, "pgpool", "-n", "-f", "/app/vendor/pgpool/pgpool.conf")
 	app := run(true, os.Args[1], os.Args[2:]...)
 
 	go func() {
-		sig := <-sigterm
+		sig := <-sigs
 
 		app.Process.Signal(sig)
 		appErr := app.Wait()
@@ -150,6 +150,7 @@ func postgresUrls() []*url.URL {
 
 func run(pipeStdin bool, command string, args ...string) *exec.Cmd {
 	cmd := exec.Command(command, args...)
+	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 
 	if pipeStdin {
 		cmd.Stdin = os.Stdin
