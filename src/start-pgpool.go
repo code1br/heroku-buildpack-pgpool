@@ -150,10 +150,11 @@ func postgresUrls() []*url.URL {
 
 func run(pipeStdin bool, command string, args ...string) *exec.Cmd {
 	cmd := exec.Command(command, args...)
-	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 
 	if pipeStdin {
 		cmd.Stdin = os.Stdin
+	} else {
+		cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	}
 
 	cmd.Stdout = os.Stdout
