@@ -10,49 +10,61 @@ import (
 	"os/exec"
 	"os/signal"
 	"strings"
+	"sync"
 	"syscall"
 )
 
 func main() {
 	configure()
 
-	sigs := make(chan os.Signal, 1)
-	done := make(chan bool, 1)
+	var wg sync.WaitGroup
+	sigterm := make(chan os.Signal, 1)
 
 	signal.Ignore(syscall.SIGINT)
-	signal.Notify(sigs, syscall.SIGTERM)
+	signal.Notify(sigterm, syscall.SIGTERM)
 
 	pgpool := run(true, "/app/.apt/usr/sbin/pgpool", "-n", "-f", "/app/vendor/pgpool/pgpool.conf")
 	defer pgpool.Process.Kill()
+	wg.Add(1)
 
 	app := run(false, os.Args[1], os.Args[2:]...)
 	defer app.Process.Kill()
+	wg.Add(1)
 
 	go func() {
-		sig := <-sigs
-
-		app.Process.Signal(sig)
-		appErr := app.Wait()
-
-		if appErr != nil {
-			log.Println(appErr)
-		}
-
-		pgpool.Process.Signal(sig)
-		pgpoolErr := pgpool.Wait()
-
-		if pgpoolErr != nil {
-			log.Println(pgpoolErr)
-		}
-
-		if appErr != nil || pgpoolErr != nil {
-			os.Exit(1)
-		}
-
-		done <- true
+		<-sigterm
+		app.Process.Signal(syscall.SIGTERM)
 	}()
 
-	<-done
+	go func() {
+		err := app.Wait()
+
+		if err != nil {
+			log.Println("app:", err)
+		}
+
+		if pgpool.Process != nil {
+			pgpool.Process.Signal(syscall.SIGTERM)
+		}
+
+		wg.Done()
+	}()
+
+	go func() {
+		err := pgpool.Wait()
+
+		if err != nil {
+			log.Println("pgpool:", err)
+		}
+
+		if app.Process != nil {
+			app.Process.Signal(syscall.SIGTERM)
+		}
+
+		wg.Done()
+	}()
+
+	wg.Wait()
 }
 
 func configure() {
