@@ -58,7 +58,6 @@ func main() {
 func configure() {
 	configurePgpoolConf()
 	configurePoolPasswd()
-	replaceDatabaseUrl()
 }
 
 func configurePgpoolConf() {
@@ -151,28 +150,24 @@ func postgresUrls() []*url.URL {
 	return postgresUrls
 }
 
-func replaceDatabaseUrl() {
+func databaseUrl() string {
 	postgresUrl := postgresUrls()[0]
 
 	user := postgresUrl.User.Username()
 	password, _ := postgresUrl.User.Password()
 	database := postgresUrl.Path[1:]
-	databaseUrl := fmt.Sprintf("postgres://%s:%s@localhost:5433/%s", user, password, database)
 
-	err := os.Setenv("DATABASE_URL", databaseUrl)
-
-	if err != nil {
-		log.Fatal(err)
-	}
+	return fmt.Sprintf("postgres://%s:%s@localhost:5433/%s", user, password, database)
 }
 
-func run(aux bool, command string, args ...string) *exec.Cmd {
+func run(pgpool bool, command string, args ...string) *exec.Cmd {
 	cmd := exec.Command(command, args...)
 
-	if aux {
+	if pgpool {
 		cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	} else {
 		cmd.Stdin = os.Stdin
+		cmd.Env = append(os.Environ(), fmt.Sprintf("DATABASE_URL=%s", databaseUrl()))
 	}
 
 	cmd.Stdout = os.Stdout
