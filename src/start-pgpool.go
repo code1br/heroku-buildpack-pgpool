@@ -157,7 +157,7 @@ func databaseUrl() string {
 	password, _ := postgresUrl.User.Password()
 	database := postgresUrl.Path[1:]
 
-	return fmt.Sprintf("postgres://%s:%s@localhost:5433/%s", user, password, database)
+	return fmt.Sprintf("postgres://%s:%s@localhost:9999/%s", user, password, database)
 }
 
 func run(pgpool bool, command string, args ...string) *exec.Cmd {
