@@ -22,8 +22,11 @@ func main() {
 	signal.Ignore(syscall.SIGINT)
 	signal.Notify(sigs, syscall.SIGTERM)
 
-	pgpool := run(false, "pgpool", "-n", "-f", "/app/vendor/pgpool/pgpool.conf")
-	app := run(true, os.Args[1], os.Args[2:]...)
+	pgpool := run(true, "pgpool", "-n", "-f", "/app/vendor/pgpool/pgpool.conf")
+	defer pgpool.Process.Kill()
+
+	app := run(false, os.Args[1], os.Args[2:]...)
+	defer app.Process.Kill()
 
 	go func() {
 		sig := <-sigs
@@ -148,13 +151,13 @@ func postgresUrls() []*url.URL {
 	return postgresUrls
 }
 
-func run(pipeStdin bool, command string, args ...string) *exec.Cmd {
+func run(aux bool, command string, args ...string) *exec.Cmd {
 	cmd := exec.Command(command, args...)
 
-	if pipeStdin {
-		cmd.Stdin = os.Stdin
-	} else {
+	if aux {
 		cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+	} else {
+		cmd.Stdin = os.Stdin
 	}
 
 	cmd.Stdout = os.Stdout
