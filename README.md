@@ -8,7 +8,7 @@ You must configure the buildpacks in the following order:
 
 ```bash
 heroku buildpacks:add https://github.com/sobrinho/heroku-buildpack-apt --index 1
-heroku buildpacks:add https://github.com/sobrinho/heroku-buildpack-pgpool --index 2
+heroku buildpacks:add https://github.com/code1br/heroku-buildpack-pgpool --index 2
 heroku buildpacks:add https://github.com/heroku/heroku-buildpack-ruby --index 3
 ```
 
