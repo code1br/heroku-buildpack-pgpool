@@ -16,7 +16,13 @@ import (
 
 func main() {
 	if os.Getenv("PGPOOL_ENABLED") == "0" {
-		if err := syscall.Exec(os.Args[1], os.Args[2:], []string{}); err != nil {
+		cmd, err := exec.LookPath(os.Args[1])
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if err := syscall.Exec(cmd, os.Args[1:], os.Environ()); err != nil {
 			log.Fatal(err)
 		}
 	}
